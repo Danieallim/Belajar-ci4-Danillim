@@ -1,5 +1,5 @@
 <?= $this->extend('layout') ?>
-<?= $this->section('content') ?>
+<?= $this->section('content') ?> 
 <?php
 if (session()->getFlashData('success')) {
 ?>
@@ -23,6 +23,9 @@ if (session()->getFlashData('failed')) {
 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">
     Tambah Data
 </button>
+<a type="button" class="btn btn-success" href="<?= base_url() ?>/produk/download">
+    Download Data
+</a>
 <!-- Table with stripped rows -->
 <table class="table datatable">
     <thead>
@@ -43,17 +46,17 @@ if (session()->getFlashData('failed')) {
                 <td><?php echo $produk['harga'] ?></td>
                 <td><?php echo $produk['jumlah'] ?></td>
                 <td>
-                    <?php if ($produk['foto'] != '' and file_exists("NiceAdmin/assets/img/" . $produk['foto'] . "")) : ?>
-                        <img src="<?php echo base_url() . "NiceAdmin/assets/img/" . $produk['foto'] ?>" width="100px">
+                    <?php if ($produk['foto'] != '' and file_exists("img/" . $produk['foto'] . "")) : ?>
+                        <img src="<?php echo base_url() . "img/" . $produk['foto'] ?>" width="100px">
                     <?php endif; ?>
                 </td>
                 <td>
-                    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#editModal-<?= $produk['id'] ?>">
+                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#editModal-<?= $produk['id'] ?>">
                         Ubah
-                    </button>
-                    <a href="<?= base_url('produk/delete/' . $produk['id']) ?>" class="btn btn-danger" onclick="return confirm('Yakin hapus data ini ?')">
+                </button>
+                <a href="<?= base_url('produk/delete/' . $produk['id']) ?>" class="btn btn-danger" onclick="return confirm('Yakin hapus data ini ?')">
                         Hapus
-                    </a>
+                </a>
                 </td>
             </tr>
             <!-- Edit Modal Begin -->
@@ -79,7 +82,7 @@ if (session()->getFlashData('failed')) {
                                     <label for="name">Jumlah</label>
                                     <input type="text" name="jumlah" class="form-control" id="jumlah" value="<?= $produk['jumlah'] ?>" placeholder="Jumlah Barang" required>
                                 </div>
-                                <img src="<?php echo base_url() . "NiceAdmin/assets/img/" . $produk['foto'] ?>" width="100px">
+                                <img src="<?php echo base_url() . "img/" . $produk['foto'] ?>" width="100px">
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" id="check" name="check" value="1">
                                     <label class="form-check-label" for="check">
@@ -103,9 +106,9 @@ if (session()->getFlashData('failed')) {
         <?php endforeach ?>
     </tbody>
 </table>
-<!-- End Table with stripped rows -->
+<!-- End Table with stripped rows --> 
 
-<!-- Add Modal Begin -->
+ <!-- Add Modal Begin -->
 <div class="modal fade" id="addModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">

@@ -4,17 +4,16 @@ namespace App\Controllers;
 
 use App\Models\ProductModel;
 use Dompdf\Dompdf;
-use App\controllers\BaseController;
-use CodeIgniter\HTTP\ResponseInterface;
 
 class ProdukController extends BaseController
 {
     protected $product; 
+    protected $validation;
 
     function __construct()
     {
         $this->product = new ProductModel();
-    } 
+    }
 
     public function index()
     {
@@ -38,7 +37,7 @@ class ProdukController extends BaseController
     if ($dataFoto->isValid()) {
         $fileName = $dataFoto->getRandomName();
         $dataForm['foto'] = $fileName;
-        $dataFoto->move('NiceAdmin/assets/img/', $fileName);
+        $dataFoto->move('img/', $fileName);
     }
 
     $this->product->insert($dataForm);
@@ -46,11 +45,7 @@ class ProdukController extends BaseController
     return redirect('produk')->with('success', 'Data Berhasil Ditambah');
 } 
 
-		/*
-    fungsi dibawah ini yang bertanggung jawab untuk
-    menangani request dari http://localhost:8080/produk/edit/23
-    */
-    public function edit($id)
+public function edit($id)
 {
     $dataProduk = $this->product->find($id);
 
@@ -62,15 +57,15 @@ class ProdukController extends BaseController
     ];
 
     if ($this->request->getPost('check') == 1) {
-        if ($dataProduk['foto'] != '' and file_exists("NiceAdmin/assets/img/" . $dataProduk['foto'] . "")) {
-            unlink("NiceAdmin/assets/img/" . $dataProduk['foto']);
+        if ($dataProduk['foto'] != '' and file_exists("img/" . $dataProduk['foto'] . "")) {
+            unlink("img/" . $dataProduk['foto']);
         }
 
         $dataFoto = $this->request->getFile('foto');
 
         if ($dataFoto->isValid()) {
             $fileName = $dataFoto->getRandomName();
-            $dataFoto->move('NiceAdmin/assets/img/', $fileName);
+            $dataFoto->move('img/', $fileName);
             $dataForm['foto'] = $fileName;
         }
     }
@@ -84,8 +79,8 @@ public function delete($id)
 {
     $dataProduk = $this->product->find($id);
 
-    if ($dataProduk['foto'] != '' and file_exists("NiceAdmin/assets/img/" . $dataProduk['foto'] . "")) {
-        unlink("NiceAdmin/assets/img/" . $dataProduk['foto']);
+    if ($dataProduk['foto'] != '' and file_exists("img/" . $dataProduk['foto'] . "")) {
+        unlink("img/" . $dataProduk['foto']);
     }
 
     $this->product->delete($id);
@@ -106,7 +101,7 @@ public function download()
 
     // instantiate and use the dompdf class
     $dompdf = new Dompdf();
- 
+
     // load HTML content (file view)
     $dompdf->loadHtml($html);
 
