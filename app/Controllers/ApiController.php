@@ -20,7 +20,7 @@ class ApiController extends ResourceController
     {
         $this->apiKey = env('API_KEY');
         $this->user = new UserModel();
-        $this->transaction = new TransactionModel();
+        $this->transaction= new TransactionModel();
         $this->transaction_detail = new TransactionDetailModel();
     }
     /**
@@ -28,34 +28,118 @@ class ApiController extends ResourceController
      *
      * @return ResponseInterface
      */
+ public function index()
+    {
+        $data = [ 
+            'results' => [],
+            'status' => ["code" => 401, "description" => "Unauthorized"]
+        ];
 
-public function index()
-{
-    $data = [ 
-        'results' => [],
-        'status' => ["code" => 401, "description" => "Unauthorized"]
-    ];
+        $headers = $this->request->headers(); 
 
-    $headers = $this->request->headers(); 
+        array_walk($headers, function (&$value, $key) {
+            $value = $value->getValue();
+        });
 
-    array_walk($headers, function (&$value, $key) {
-        $value = $value->getValue();
-    });
+        if (array_key_exists("Key", $headers) && $headers["Key"] == $this->apiKey) {
 
-    if(array_key_exists("Key", $headers)){
-        if ($headers["Key"] == $this->apiKey) {
             $penjualan = $this->transaction->findAll();
-            
+
+            $statusList = [
+                '0' => 'Belum Bayar',
+                '1' => 'Diproses',
+                '2' => 'Dikirim',
+                '3' => 'Selesai',
+                '4' => 'Dibatalkan'
+            ];
+
             foreach ($penjualan as &$pj) {
-                $pj['details'] = $this->transaction_detail->where('transaction_id', $pj['id'])->findAll();
+                $details = $this->transaction_detail->where('transaction_id', $pj['id'])->findAll();
+
+                // Hitung jumlah item
+                $jumlah_item = 0;
+                foreach ($details as $d) {
+                    $jumlah_item += (int)$d['jumlah'];
+                }
+
+                $pj['jumlah_item'] = $jumlah_item;
+                $pj['details'] = $details;
+                $pj['tanggal_transaksi'] = $pj['created_at'] ?? null;
+                $pj['status'] = $statusList[$pj['status']] ?? 'Belum Diketahui';
             }
 
             $data['status'] = ["code" => 200, "description" => "OK"];
             $data['results'] = $penjualan;
-
         }
-    } 
 
-    return $this->respond($data);
-}
+        return $this->respond($data);
+    }
+
+    /**
+     * Return the properties of a resource object.
+     *
+     * @param int|string|null $id
+     *
+     * @return ResponseInterface
+     */
+    public function show($id = null)
+    {
+        //
+    }
+
+    /**
+     * Return a new resource object, with default properties.
+     *
+     * @return ResponseInterface
+     */
+    public function new()
+    {
+        //
+    }
+
+    /**
+     * Create a new resource object, from "posted" parameters.
+     *
+     * @return ResponseInterface
+     */
+    public function create()
+    {
+        //
+    }
+
+    /**
+     * Return the editable properties of a resource object.
+     *
+     * @param int|string|null $id
+     *
+     * @return ResponseInterface
+     */
+    public function edit($id = null)
+    {
+        //
+    }
+
+    /**
+     * Add / update a model resource, from "posted" properties.
+     *
+     * @param int|string|null $id
+     *
+     * @return ResponseInterface
+     */
+    public function update($id = null)
+    {
+        //
+    }
+
+    /**
+     * Delete the designated resource object from the model.
+     *
+     * @param int|string|null $id
+     *
+     * @return ResponseInterface
+     */
+    public function delete($id = null)
+    {
+        //
+    }
 }
